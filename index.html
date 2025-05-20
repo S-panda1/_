@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+ 
+  <link href="https://fonts.googleapis.com/css2?family=Alegreya+Sans+SC:wght@300;400&family=Dosis&family=Exo:ital,wght@0,100..900;1,100..900&family=Fira+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Tektur:wght@400..900&display=swap" rel="stylesheet">
+  <title>Subhankar Panda</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.5.10/p5.js"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body, html {
+      height: 100%;
+      font-family: 'Fira Sans', sans-serif;
+      background-color: #000000;
+      color: #ffffff;
+      overflow-x: hidden;
+    }
+    
+    body {
+      display: flex;
+      flex-direction: row;
+    }
+    
+    .left-section {
+      flex: 1;
+      padding: 2rem 3rem;
+      position: relative;
+      min-height: 100vh;
+      max-width: calc(100% - 250px);
+      z-index: 2;
+    }
+    
+    .name {
+      font-size: 4.5rem;
+      font-weight: 200;
+      margin-bottom: 3rem;
+      font-family: "Exo", sans-serif;
+      letter-spacing: 2px;
+    }
+    
+    .content-title {
+      font-size: 3rem;
+      font-family: "Exo", sans-serif;
+      margin-bottom: 1.5rem;
+      font-weight: 200;
+    }
+    
+    .content-body {
+      font-size: 1.2rem;
+      line-height: 1.6;
+      font-weight: 300;
+    }
+    
+    .main-content {
+      display: none;
+      opacity: 0;
+      transition: opacity 0.5s ease;
+      position: relative;
+      z-index: 1;
+    }
+    
+    .main-content.active {
+      display: block;
+      opacity: 1;
+    }
+    
+    .social-icons {
+      position: absolute;
+      bottom: 2rem;
+      left: 3rem;
+      display: flex;
+      gap: 1.5rem;
+    }
+    
+    .social-icons a {
+      color: white;
+      font-size: 1.5rem;
+      text-decoration: none;
+    }
+    
+    .right-section {
+      width: 250px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      text-align: right;
+      border-left: 1px solid rgba(255, 255, 255, 0.1);
+      padding-right: 3rem;
+      z-index: 1;
+    }
+    
+    .nav-box {
+      height: auto;
+      padding: 1.5rem 0;
+      cursor: pointer;
+      position: relative;
+      transition: opacity 0.3s ease;
+    }
+    
+    .nav-box:hover {
+      opacity: 0.7;
+    }
+    
+    .nav-box.active {
+      opacity: 1;
+    }
+    
+    .nav-box::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      width: 100%;
+      height: 1px;
+      background-color: rgba(255, 255, 255, 0.2);
+    }
+    
+    .nav-box:last-child::after {
+      display: none;
+    }
+    
+    .nav-link {
+      font-family: "Exo", sans-serif;
+      font-size: 2.5rem;
+      font-weight: 100;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+    
+    #canvas-holder {
+      position: absolute;
+      align-items: center;
+      justify-content: center;
+      top: 50%;
+      left: 60%;
+      margin-left: -10rem;
+      margin-top: -5rem;
+      transform: translate(-50%, -50%);
+      width: 400px;
+      height: 400px;
+      z-index: 0;
+    }
+    
+    /* Responsive adjustments */
+    @media screen and (min-width: 1600px) {
+      .left-section {
+        padding: 3rem 5rem;
+      }
+      
+      .name {
+        font-size: 5.5rem;
+      }
+      
+      .content-title {
+        font-size: 3.5rem;
+      }
+      
+      .content-body {
+        font-size: 1.4rem;
+      }
+      
+      .right-section {
+        width: 300px;
+      }
+      
+      .nav-link {
+        font-size: 3rem;
+      }
+      
+      #canvas-holder {
+        width: 500px;
+        height: 500px;
+      }
+    }
+    
+    @media screen and (max-width: 1200px) {
+      .name {
+        font-size: 4rem;
+      }
+      
+      .content-title {
+        font-size: 2.5rem;
+      }
+      
+      .right-section {
+        width: 200px;
+      }
+      
+      .nav-link {
+        font-size: 2rem;
+      }
+      
+      #canvas-holder {
+        width: 350px;
+        height: 350px;
+        left: 55%;
+      }
+    }
+    
+    @media screen and (max-width: 992px) {
+      .name {
+        font-size: 3.5rem;
+      }
+      
+      .content-title {
+        font-size: 2rem;
+      }
+      
+      .content-body {
+        font-size: 1.1rem;
+      }
+      
+      #canvas-holder {
+        width: 300px;
+        height: 300px;
+        left: 50%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="left-section">
+    <div class="name">Subhankar Panda</div>
+    
+    <!-- Home Section Content -->
+    <div id="home-content" class="main-content active">
+      <div class="content-title">Welcome</div>
+      <div class="content-body">
+        <p>Hello! I'm Subhankar Panda</p>
+      </div>
+    </div>
+    
+    <!-- Projects Section Content -->
+    <div id="projects-content" class="main-content">
+      <div class="content-title">Projects</div>
+      <div class="content-body">
+        <p>Here you can showcase your projects. Each project can include descriptions, images, links, and technologies used.</p>
+        <p>Click on the navigation boxes on the right to switch between different sections.</p>
+      </div>
+    </div>
+    
+    <!-- Blog Section Content -->
+    <div id="blog-content" class="main-content">
+      <div class="content-title">Blog</div>
+      <div class="content-body">
+        <p>Your blog posts will appear here. Share your thoughts, experiences, and expertise with your audience.</p>
+        <p>Each post can include titles, dates, categories, and the post content itself.</p>
+      </div>
+    </div>
+    
+    <!-- Lists Section Content -->
+    <div id="lists-content" class="main-content">
+      <div class="content-title">Lists</div>
+      <div class="content-body">
+        <p>This section can contain various lists of your choosing - favorite books, music, travel destinations, or any collections you want to share.</p>
+        <p>Lists can be organized by categories or tags for better navigation.</p>
+      </div>
+    </div>
+    
+    <!-- Music Section Content -->
+    <div id="music-content" class="main-content">
+      <div class="content-title">Music</div>
+      <div class="content-body">
+        <p>Share your musical interests, playlists, compositions, or recommendations.</p>
+        <p>You could embed music players, link to streaming platforms, or simply list your favorite tracks.</p>
+      </div>
+    </div>
+    
+    <div class="social-icons">
+      <a href="#" title="Twitter">&#x1F426;</a>
+      <a href="#" title="Instagram">&#x1F4F7;</a>
+      <a href="#" title="GitHub">&#x1F4BB;</a>
+      <a href="#" title="Spotify">&#x1F3A7;</a>
+    </div>
+  </div>
+  
+  <div id="canvas-holder"></div>
+  
+  <div class="right-section">
+    <div class="nav-box active" data-section="home">
+      <div class="nav-link">Home</div>
+    </div>
+    <div class="nav-box" data-section="projects">
+      <div class="nav-link">Projects</div>
+    </div>
+    <div class="nav-box" data-section="blog">
+      <div class="nav-link">Blog</div>
+    </div>
+    <div class="nav-box" data-section="lists">
+      <div class="nav-link">Lists</div>
+    </div>
+    <div class="nav-box" data-section="music">
+      <div class="nav-link">Music</div>
+    </div>
+  </div>
+
+  <script>
+    // Add event listeners to navigation boxes
+    document.querySelectorAll('.nav-box').forEach(box => {
+      box.addEventListener('click', function() {
+        // Remove active class from all boxes and content sections
+        document.querySelectorAll('.nav-box').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.main-content').forEach(content => content.classList.remove('active'));
+        
+        // Add active class to clicked box
+        this.classList.add('active');
+        
+        // Show corresponding content
+        const section = this.getAttribute('data-section');
+        document.getElementById(`${section}-content`).classList.add('active');
+      });
+    });
+  </script>
+  <!-- Using the existing sketch.js file -->
+  <script src="sketch.js"></script>
+</body>
+</html>
