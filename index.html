@@ -5,10 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
- 
   <link href="https://fonts.googleapis.com/css2?family=Alegreya+Sans+SC:wght@300;400&family=Dosis&family=Exo:ital,wght@0,100..900;1,100..900&family=Fira+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Tektur:wght@400..900&display=swap" rel="stylesheet">
   <title>Subhankar Panda</title>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.5.10/p5.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
+   <script src="https://kit.fontawesome.com/055c773eb0.js" crossorigin="anonymous"></script>
   <style>
     * {
       margin: 0;
@@ -19,272 +19,347 @@
     body, html {
       height: 100%;
       font-family: 'Fira Sans', sans-serif;
-      background-color: #000000;
-      color: #ffffff;
+      /* background: radial-gradient(ellipse at center, #1a1a1a 0%, #000000 70%); */
+      color: #e0e0e0;
       overflow-x: hidden;
+      background-color: #000000;
     }
     
     body {
       display: flex;
-      flex-direction: row;
+      flex-direction: row; /* Main layout: content | nav */
     }
     
-    .left-section {
-      flex: 1;
-      padding: 2rem 3rem;
-      position: relative;
+    .main-view-area { /* Formerly .left-section */
+      flex: 1; /* Takes up most of the space */
+      padding: 2.5rem 4rem;
+      position: relative; /* For absolute positioned children like social icons */
       min-height: 100vh;
-      max-width: calc(100% - 250px);
-      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      z-index: 2; /* Above canvas */
     }
     
     .name {
-      font-size: 4.5rem;
+      font-size: 4.2rem;
       font-weight: 200;
-      margin-bottom: 3rem;
+      margin-bottom: 2.5rem;
       font-family: "Exo", sans-serif;
-      letter-spacing: 2px;
+      letter-spacing: 1.5px;
+      color: #ffffff;
     }
     
     .content-title {
-      font-size: 3rem;
+      font-size: 2.8rem;
       font-family: "Exo", sans-serif;
       margin-bottom: 1.5rem;
-      font-weight: 200;
+      font-weight: 300;
+      color: #f5f5f5;
     }
     
     .content-body {
-      font-size: 1.2rem;
-      line-height: 1.6;
+      font-size: 1.15rem;
+      line-height: 1.7;
       font-weight: 300;
+      max-width: 700px;
+      color: #cccccc;
+    }
+
+    .content-body p {
+        margin-bottom: 1rem;
     }
     
-    .main-content {
+    .page-content { /* Renamed from .main-content for clarity */
       display: none;
       opacity: 0;
-      transition: opacity 0.5s ease;
+      transform: translateY(20px);
+      transition: opacity 0.6s ease-out, transform 0.6s ease-out;
       position: relative;
       z-index: 1;
     }
     
-    .main-content.active {
+    .page-content.active {
       display: block;
       opacity: 1;
+      transform: translateY(0);
     }
     
     .social-icons {
       position: absolute;
-      bottom: 2rem;
-      left: 3rem;
+      bottom: 2.5rem;
+      left: 4rem;
       display: flex;
-      gap: 1.5rem;
+      gap: 1.8rem;
+      color: #000000;
+      margin-left: 50%;
+      justify-content: center;
+      align-items: center;
     }
+
+ 
     
-    .social-icons a {
-      color: white;
-      font-size: 1.5rem;
+    /* .social-icons a {
+      color: #b0b0b0;
+      font-size: 1.6rem;
       text-decoration: none;
+      transition: color 0.3s ease, transform 0.3s ease;
     }
+
+    .social-icons a:hover {
+      color: #ffffff;
+      transform: translateY(-3px);
+    } */
     
-    .right-section {
-      width: 250px;
+    .navigation-menu { /* Formerly .right-section */
+      width: 280px; /* Adjust width as needed for nav items */
       display: flex;
       flex-direction: column;
       justify-content: center;
-      text-align: right;
-      border-left: 1px solid rgba(255, 255, 255, 0.1);
-      padding-right: 3rem;
-      z-index: 1;
+      text-align: right; /* Aligns .nav-box content (the .nav-link) to the right */
+      /* border-left: 1px solid rgba(255, 255, 255, 0.08); Removed border */
+      padding: 0 2.5rem; /* Padding for the nav items within this column */
+      z-index: 1; /* Can be 1 or 2, ensure clickable */
+      background-color: rgba(0,0,0,0.1); /* Subtle background for nav area */
     }
     
     .nav-box {
-      height: auto;
-      padding: 1.5rem 0;
+      padding: 1.5rem 0; /* Vertical padding for each nav item */
       cursor: pointer;
-      position: relative;
-      transition: opacity 0.3s ease;
+      position: relative; /* For pseudo-elements if needed later, and general positioning context */
+      transition: background-color 0.3s ease; /* Smooth background transition */
     }
-    
-    .nav-box:hover {
-      opacity: 0.7;
-    }
-    
-    .nav-box.active {
-      opacity: 1;
-    }
-    
-    .nav-box::after {
-      content: '';
-      position: absolute;
-      bottom: 0;
-      right: 0;
-      width: 100%;
-      height: 1px;
-      background-color: rgba(255, 255, 255, 0.2);
-    }
-    
-    .nav-box:last-child::after {
-      display: none;
+        
+    /* .nav-box::after { display: none; } Remove old bottom line */
+    .nav-box:last-child {
+      /* No special styling needed unless you want to remove a border if it existed */
     }
     
     .nav-link {
       font-family: "Exo", sans-serif;
-      font-size: 2.5rem;
-      font-weight: 100;
+      font-size: 2.2rem; /* Base font size */
+      font-weight: 200;
       text-transform: uppercase;
       letter-spacing: 2px;
+      color: #a0a0a0; /* Default color for inactive links */
+      transition: color 0.3s ease, font-weight 0.3s ease, letter-spacing 0.3s ease;
+      display: inline-block; /* Important for padding and pseudo-element positioning */
+      position: relative; /* For the dot pseudo-element */
+      padding-right: 25px; /* Space for the dot */
+    }
+
+    .nav-link:hover {
+      color: #ffffff; /* Brighten up text on hover */
+    }
+    
+    .nav-box.active .nav-link {
+      color: #ffffff; /* Active link text color */
+      font-weight: 400;
+      letter-spacing: 2.5px;
+    }
+
+    /* The dot indicator for active page */
+    .nav-link::after {
+      content: '';
+      display: block;
+      width: 8px;
+      height: 8px;
+      background-color: #ffffff; /* Dot color */
+      border-radius: 50%;
+      position: absolute;
+      right: 0; /* Position to the far right of the padding-right area */
+      top: 50%;
+      transform: translateY(-50%);
+      opacity: 0; /* Hidden by default */
+      transition: opacity 0.3s ease-in-out;
+    }
+
+    .nav-box.active .nav-link::after {
+      opacity: 1; /* Show dot for active page */
     }
     
     #canvas-holder {
-      position: absolute;
-      align-items: center;
-      justify-content: center;
+      position: fixed;
       top: 50%;
-      left: 60%;
-      margin-left: -10rem;
-      margin-top: -5rem;
+      left: 50%;
       transform: translate(-50%, -50%);
-      width: 400px;
-      height: 400px;
-      z-index: 0;
+      width: 65vw; 
+      height: 85vh; 
+      max-width: 900px; 
+      max-height: 750px; 
+      z-index: 0; /* Behind everything */
+      pointer-events: none;
+      opacity: 0.7; 
     }
-    
-    /* Responsive adjustments */
+
+    /* --- Responsive Adjustments --- */
     @media screen and (min-width: 1600px) {
-      .left-section {
-        padding: 3rem 5rem;
-      }
-      
-      .name {
-        font-size: 5.5rem;
-      }
-      
-      .content-title {
-        font-size: 3.5rem;
-      }
-      
-      .content-body {
-        font-size: 1.4rem;
-      }
-      
-      .right-section {
-        width: 300px;
-      }
-      
-      .nav-link {
-        font-size: 3rem;
-      }
-      
-      #canvas-holder {
-        width: 500px;
-        height: 500px;
-      }
+      .main-view-area { padding: 3.5rem 5.5rem; }
+      .name { font-size: 5rem; }
+      .content-title { font-size: 3.2rem; }
+      .content-body { font-size: 1.3rem; }
+      .navigation-menu { width: 320px; padding: 0 3.5rem; }
+      .nav-link { font-size: 2.5rem; padding-right: 30px; } /* Adjust dot spacing */
+      .nav-link::after { width: 10px; height: 10px; } /* Slightly larger dot */
     }
     
     @media screen and (max-width: 1200px) {
-      .name {
-        font-size: 4rem;
-      }
-      
-      .content-title {
-        font-size: 2.5rem;
-      }
-      
-      .right-section {
-        width: 200px;
-      }
-      
-      .nav-link {
-        font-size: 2rem;
-      }
-      
-      #canvas-holder {
-        width: 350px;
-        height: 350px;
-        left: 55%;
-      }
+      .main-view-area { padding: 2rem 3rem; }
+      .name { font-size: 3.8rem; }
+      .content-title { font-size: 2.3rem; }
+      .navigation-menu { width: 250px; padding: 0 2rem;}
+      .nav-link { font-size: 2rem; padding-right: 22px; }
+      .nav-link::after { width: 7px; height: 7px; }
     }
     
-    @media screen and (max-width: 992px) {
-      .name {
-        font-size: 3.5rem;
-      }
+    @media screen and (max-width: 992px) { /* Tablet and Mobile */
+      body { flex-direction: column; } /* Stack main view and nav */
       
-      .content-title {
-        font-size: 2rem;
+      .main-view-area {
+        padding: 3rem 2rem;
+        min-height: auto; 
+        order: 2; /* Content below nav */
+        text-align: center; 
+        align-items: center; 
       }
-      
-      .content-body {
-        font-size: 1.1rem;
+      .name { font-size: 3rem; margin-bottom: 1.5rem; text-align: center;}
+      .content-title { font-size: 1.8rem; text-align: center;}
+      .content-body { font-size: 1rem; text-align: left; }
+      .social-icons {
+        position: relative; 
+        bottom: auto; left: auto;
+        justify-content: center;
+        margin-top: 2rem;
+        margin-bottom: 1rem; 
+      }
+
+      .navigation-menu {
+        width: 100%;
+        order: 1; /* Nav on top */
+        flex-direction: row; /* Horizontal nav items */
+        flex-wrap: wrap; 
+        justify-content: center; /* Center nav items */
+        text-align: center; /* Center text within nav items */
+        padding: 1rem 1rem; /* Padding for the nav bar */
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08); /* Separator line */
+        background-color: rgba(0,0,0,0.25);
+      }
+      .nav-box {
+        padding: 0.8rem 1rem; /* Padding around each nav item */
+        text-align: center; /* Ensure link is centered in box */
+      }
+      .nav-link {
+        font-size: 1.1rem; /* Smaller font for horizontal nav */
+        letter-spacing: 1px;
+        padding-right: 18px; /* Adjust space for dot */
+      }
+      .nav-box.active .nav-link {
+        letter-spacing: 1.5px; 
+      }
+      .nav-link::after { /* Dot styling for horizontal nav */
+        width: 6px;
+        height: 6px;
+        /* Position will still be relative to nav-link, which is fine */
       }
       
       #canvas-holder {
-        width: 300px;
-        height: 300px;
-        left: 50%;
+        width: 80vw; height: 50vh; 
+        max-width: 400px; max-height: 300px;
+        opacity: 0.5;
+        top: 20%; /* Adjust if nav bar is tall */
       }
     }
+
+    @media screen and (max-width: 768px) { /* Smaller Mobile */
+        .main-view-area { padding: 2rem 1.5rem; }
+        .name { font-size: 2.5rem; }
+        .content-title { font-size: 1.6rem; }
+        .navigation-menu { padding: 0.8rem 0.5rem; }
+        .nav-box { padding: 0.6rem 0.8rem; }
+        .nav-link { font-size: 0.9rem; padding-right: 15px; }
+        .nav-link::after { width: 5px; height: 5px; }
+
+        #canvas-holder {
+             width: 90vw; height: 40vh;
+             max-width: 300px; max-height: 250px;
+             opacity: 0.4;
+             top: 15%;
+        }
+    }
+    @media screen and (max-width: 480px) { /* Extra Small Mobile */
+        .nav-link { font-size: 0.8rem; padding-right: 12px; }
+        .nav-link::after { width: 4px; height: 4px; }
+    }
+
   </style>
 </head>
 <body>
-  <div class="left-section">
+  <!-- Main Content Area -->
+  <div class="main-view-area">
     <div class="name">Subhankar Panda</div>
     
-    <!-- Home Section Content -->
-    <div id="home-content" class="main-content active">
+    <div id="home-content" class="page-content active">
       <div class="content-title">Welcome</div>
       <div class="content-body">
-        <p>Hello! I'm Subhankar Panda</p>
+        <p>Hello! I'm Subhankar Panda, a passionate creator and developer. This space is a window into my projects, thoughts, and inspirations. Dive in and explore!</p>
       </div>
     </div>
     
-    <!-- Projects Section Content -->
-    <div id="projects-content" class="main-content">
+    <div id="projects-content" class="page-content">
       <div class="content-title">Projects</div>
       <div class="content-body">
-        <p>Here you can showcase your projects. Each project can include descriptions, images, links, and technologies used.</p>
-        <p>Click on the navigation boxes on the right to switch between different sections.</p>
+        <p>Here I showcase my work. From web applications to creative coding experiments, each project reflects a journey of learning and creation.</p>
+        <p><em>Example Project Alpha:</em> A full-stack solution for data visualization. Technologies: React, Node.js, D3.js.</p>
       </div>
     </div>
     
-    <!-- Blog Section Content -->
-    <div id="blog-content" class="main-content">
+    <div id="blog-content" class="page-content">
       <div class="content-title">Blog</div>
       <div class="content-body">
-        <p>Your blog posts will appear here. Share your thoughts, experiences, and expertise with your audience.</p>
-        <p>Each post can include titles, dates, categories, and the post content itself.</p>
+        <p>Thoughts, tutorials, and reflections on technology, design, and life. A place for sharing knowledge and sparking conversations.</p>
+        <p><em>Latest Post:</em> "The Aesthetics of Code - Finding Beauty in Logic."</p>
       </div>
     </div>
     
-    <!-- Lists Section Content -->
-    <div id="lists-content" class="main-content">
+    <div id="lists-content" class="page-content">
       <div class="content-title">Lists</div>
       <div class="content-body">
-        <p>This section can contain various lists of your choosing - favorite books, music, travel destinations, or any collections you want to share.</p>
-        <p>Lists can be organized by categories or tags for better navigation.</p>
+        <p>Curated collections of things I find inspiring or noteworthy. Books that shaped my thinking, tools I can't live without, or music that fuels my focus.</p>
+        <p><em>Currently Reading:</em> "Sapiens" by Yuval Noah Harari.</p>
       </div>
     </div>
     
-    <!-- Music Section Content -->
-    <div id="music-content" class="main-content">
+    <div id="music-content" class="page-content">
       <div class="content-title">Music</div>
       <div class="content-body">
-        <p>Share your musical interests, playlists, compositions, or recommendations.</p>
-        <p>You could embed music players, link to streaming platforms, or simply list your favorite tracks.</p>
+        <p>Music is a constant companion. Here I share playlists that set the mood for coding, relaxing, or exploring new ideas.</p>
+        <p><em>Current Vibe:</em> Ambient electronic and lo-fi hip hop.</p>
       </div>
     </div>
     
     <div class="social-icons">
-      <a href="#" title="Twitter">&#x1F426;</a>
-      <a href="#" title="Instagram">&#x1F4F7;</a>
-      <a href="#" title="GitHub">&#x1F4BB;</a>
-      <a href="#" title="Spotify">&#x1F3A7;</a>
+<a href="mailto:example@example.com" title="Email" target="_blank" aria-label="Email" >
+  <img src="envelope-solid.svg" alt="Email icon" width="42" height="42" />
+</a>
+
+
+      <a href="#" title="Github" target="_blank" aria-label="Github">
+<img src="github-brands.svg" alt="Github" width="42" height="42" />
+      </a>
+      <a href="#" title="Twitter" target="_blank" aria-label="Twitter">
+<img src="x-twitter-brands.svg" alt="X" width="42" height="42" />
+      </a>
+      <a href="#" title="Linkedin" target="_blank" aria-label="Linkedin">
+        <img src="linkedin-in-brands (1).svg" alt="Linkein" width="42" height="42" />
+      </a>
     </div>
   </div>
   
+  <!-- p5.js Canvas will be placed here by script -->
   <div id="canvas-holder"></div>
   
-  <div class="right-section">
+  <!-- Navigation Menu -->
+  <div class="navigation-menu">
     <div class="nav-box active" data-section="home">
       <div class="nav-link">Home</div>
     </div>
@@ -303,23 +378,28 @@
   </div>
 
   <script>
-    // Add event listeners to navigation boxes
     document.querySelectorAll('.nav-box').forEach(box => {
       box.addEventListener('click', function() {
-        // Remove active class from all boxes and content sections
         document.querySelectorAll('.nav-box').forEach(b => b.classList.remove('active'));
-        document.querySelectorAll('.main-content').forEach(content => content.classList.remove('active'));
+        document.querySelectorAll('.page-content').forEach(content => content.classList.remove('active')); // Changed .main-content to .page-content
         
-        // Add active class to clicked box
         this.classList.add('active');
         
-        // Show corresponding content
         const section = this.getAttribute('data-section');
-        document.getElementById(`${section}-content`).classList.add('active');
+        const targetContent = document.getElementById(`${section}-content`);
+        if (targetContent) {
+            targetContent.classList.add('active');
+        }
       });
     });
+
+    // Optional: Ensure 'Home' is active by default if not set in HTML already
+    // document.addEventListener('DOMContentLoaded', () => {
+    //    if (!document.querySelector('.nav-box.active')) {
+    //        document.querySelector('.nav-box[data-section="home"]').click();
+    //    }
+    // });
   </script>
-  <!-- Using the existing sketch.js file -->
-  <script src="sketch.js"></script>
+  <script src="sketch.js"></script> <!-- Your existing sketch.js -->
 </body>
 </html>
