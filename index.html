@@ -5,10 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Alegreya+Sans+SC:wght@300;400&family=Dosis&family=Exo:ital,wght@0,100..900;1,100..900&family=Fira+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Tektur:wght@400..900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Exo:ital,wght@0,100..900;1,100..900&family=Fira+Sans:ital,wght@0,200;0,300;0,400;0,500&display=swap" rel="stylesheet">
   <title>Subhankar Panda</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
-   <script src="https://kit.fontawesome.com/055c773eb0.js" crossorigin="anonymous"></script>
   <style>
     * {
       margin: 0;
@@ -19,387 +18,415 @@
     body, html {
       height: 100%;
       font-family: 'Fira Sans', sans-serif;
-      /* background: radial-gradient(ellipse at center, #1a1a1a 0%, #000000 70%); */
-      color: #e0e0e0;
+      background-color: #000000; 
+      color: #ffffff; 
       overflow-x: hidden;
-      background-color: #000000;
     }
     
     body {
       display: flex;
-      flex-direction: row; /* Main layout: content | nav */
+      flex-direction: row; /* Default: Desktop layout */
     }
     
-    .main-view-area { /* Formerly .left-section */
-      flex: 1; /* Takes up most of the space */
-      padding: 2.5rem 4rem;
-      position: relative; /* For absolute positioned children like social icons */
+    .left-section { 
+      flex: 1; 
+      padding: 3vw 4vw; 
+      position: relative; 
       min-height: 100vh;
       display: flex;
       flex-direction: column;
-      justify-content: center;
-      z-index: 2; /* Above canvas */
+      justify-content: center; 
+      z-index: 2; 
+       /* Added for potential scroll on desktop if content is too tall */
+    }
+
+    .content-align-wrapper {
+        width: 100%; 
+        position: relative;
+        z-index: 1;
     }
     
     .name {
-      font-size: 4.2rem;
-      font-weight: 200;
-      margin-bottom: 2.5rem;
+      font-size: clamp(3rem, 6vw, 5rem); 
+      font-weight: 300; 
+      margin-bottom: -1rem; 
       font-family: "Exo", sans-serif;
       letter-spacing: 1.5px;
       color: #ffffff;
-    }
-    
-    .content-title {
-      font-size: 2.8rem;
-      font-family: "Exo", sans-serif;
-      margin-bottom: 1.5rem;
-      font-weight: 300;
-      color: #f5f5f5;
+      transition: color 0.2s ease-in; 
+      position: relative;
+      z-index: 1;
     }
     
     .content-body {
-      font-size: 1.15rem;
-      line-height: 1.7;
-      font-weight: 300;
-      max-width: 700px;
-      color: #cccccc;
+      font-size: clamp(1rem, 1.6vw, 1.35rem); 
+      line-height: 1.4; 
+      font-weight: 300; 
+      max-width: 45ch; 
+      color: #cccccc; 
+      margin-top: 2.5rem; 
+      transition: color 0.2s ease-in;
+      position: relative;
+      z-index: 1;
     }
 
     .content-body p {
         margin-bottom: 1rem;
     }
     
-    .page-content { /* Renamed from .main-content for clarity */
+    .page-content {
       display: none;
       opacity: 0;
       transform: translateY(20px);
-      transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+      transition: opacity 0.6s ease-out, transform 0.6s ease-out, color 0.2s ease-in;
       position: relative;
       z-index: 1;
     }
     
     .page-content.active {
-      display: block;
+      display: block; /* Default for desktop */
       opacity: 1;
       transform: translateY(0);
     }
     
     .social-icons {
-      position: absolute;
-      bottom: 2.5rem;
-      left: 4rem;
       display: flex;
-      gap: 1.8rem;
-      color: #000000;
-      margin-left: 50%;
-      justify-content: center;
-      align-items: center;
+      gap: 1.5rem; 
+      margin-top: 2.5rem; 
+      margin-bottom: clamp(2rem, 4vh, 3rem); 
+      justify-content: flex-start; 
+      padding-left: 0; 
     }
-
- 
     
-    /* .social-icons a {
-      color: #b0b0b0;
-      font-size: 1.6rem;
-      text-decoration: none;
-      transition: color 0.3s ease, transform 0.3s ease;
+    .social-icons a img {
+        /* SMALLER social icons */
+        width: clamp(28px, 2.8vw, 40px); 
+        height: clamp(28px, 2.8vw, 40px);
+        filter: brightness(0) invert(1); 
+        transition: transform 0.2s ease-in, opacity 0.2s ease-in; 
+        opacity: 0.8; 
     }
-
-    .social-icons a:hover {
-      color: #ffffff;
-      transform: translateY(-3px);
-    } */
+     .social-icons a:hover img {
+        transform: scale(1.1); 
+        opacity: 1; 
+    }
     
-    .navigation-menu { /* Formerly .right-section */
-      width: 280px; /* Adjust width as needed for nav items */
+    .navigation-menu { 
+      width: clamp(250px, 20vw, 320px); 
       display: flex;
       flex-direction: column;
-      justify-content: center;
-      text-align: right; /* Aligns .nav-box content (the .nav-link) to the right */
-      /* border-left: 1px solid rgba(255, 255, 255, 0.08); Removed border */
-      padding: 0 2.5rem; /* Padding for the nav items within this column */
-      z-index: 1; /* Can be 1 or 2, ensure clickable */
-      background-color: rgba(0,0,0,0.1); /* Subtle background for nav area */
+      justify-content: center; 
+      text-align: right; 
+      padding: 0 clamp(2rem, 3vw, 3.5rem); 
+      z-index: 10; /* Ensure it's above canvas if canvas z-index changes */
+      background-color: rgba(0,0,0,0.05); 
+      border-left: 1px solid #ffffff1d; 
     }
     
-    .nav-box {
-      padding: 1.5rem 0; /* Vertical padding for each nav item */
+    .nav-item { 
+      padding: clamp(1.2rem, 2vh, 1.8rem) 0; 
       cursor: pointer;
-      position: relative; /* For pseudo-elements if needed later, and general positioning context */
-      transition: background-color 0.3s ease; /* Smooth background transition */
+      position: relative; 
+      text-decoration: none; 
     }
         
-    /* .nav-box::after { display: none; } Remove old bottom line */
-    .nav-box:last-child {
-      /* No special styling needed unless you want to remove a border if it existed */
-    }
-    
-    .nav-link {
+    .nav-link { 
       font-family: "Exo", sans-serif;
-      font-size: 2.2rem; /* Base font size */
-      font-weight: 200;
+      font-size: clamp(1.8rem, 2.5vw, 2.5rem); 
+      font-weight: 200; 
       text-transform: uppercase;
       letter-spacing: 2px;
-      color: #a0a0a0; /* Default color for inactive links */
-      transition: color 0.3s ease, font-weight 0.3s ease, letter-spacing 0.3s ease;
-      display: inline-block; /* Important for padding and pseudo-element positioning */
-      position: relative; /* For the dot pseudo-element */
-      padding-right: 25px; /* Space for the dot */
+      color: #a0a0a0; 
+      transition: color 0.2s ease-in, font-weight 0.2s ease-in, letter-spacing 0.2s ease-in; 
+      display: inline-block; 
+      position: relative; 
+      padding-bottom: 5px; 
     }
 
-    .nav-link:hover {
-      color: #ffffff; /* Brighten up text on hover */
-    }
-    
-    .nav-box.active .nav-link {
-      color: #ffffff; /* Active link text color */
-      font-weight: 400;
-      letter-spacing: 2.5px;
-    }
-
-    /* The dot indicator for active page */
-    .nav-link::after {
+    .nav-link::after { /* Underline */
       content: '';
-      display: block;
-      width: 8px;
-      height: 8px;
-      background-color: #ffffff; /* Dot color */
-      border-radius: 50%;
       position: absolute;
-      right: 0; /* Position to the far right of the padding-right area */
-      top: 50%;
-      transform: translateY(-50%);
-      opacity: 0; /* Hidden by default */
-      transition: opacity 0.3s ease-in-out;
+      left: 0;
+      bottom: 0;
+      width: 100%;
+      height: 1px; 
+      background-color: #31ffff; 
+      transform: scaleX(0);
+      transform-origin: right; 
+      transition: transform 0.2s ease-in; 
+    }
+    .nav-item:hover .nav-link::after, 
+    .nav-item.active .nav-link::after {
+      transform: scaleX(1);
+      transform-origin: left; 
     }
 
-    .nav-box.active .nav-link::after {
-      opacity: 1; /* Show dot for active page */
+    .nav-item:hover .nav-link { 
+      color: #31ffff; 
+      font-weight: 400; 
     }
     
-    #canvas-holder {
+    .nav-item.active .nav-link { 
+      color:  #31ffff; 
+      font-weight: 400; 
+      letter-spacing: 2.5px; 
+    }
+    
+    #canvas-holder { /* DESKTOP: Fixed centered backdrop */
       position: fixed;
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
-      width: 65vw; 
-      height: 85vh; 
-      max-width: 900px; 
-      max-height: 750px; 
-      z-index: 0; /* Behind everything */
+      width: clamp(60vw, 65vw, 70vw); 
+      height: clamp(80vh, 85vh, 90vh); 
+      max-width: 1000px; 
+      max-height: 850px; 
+      z-index: 0; 
       pointer-events: none;
-      opacity: 0.7; 
+      opacity: 1; 
     }
 
     /* --- Responsive Adjustments --- */
-    @media screen and (min-width: 1600px) {
-      .main-view-area { padding: 3.5rem 5.5rem; }
-      .name { font-size: 5rem; }
-      .content-title { font-size: 3.2rem; }
-      .content-body { font-size: 1.3rem; }
-      .navigation-menu { width: 320px; padding: 0 3.5rem; }
-      .nav-link { font-size: 2.5rem; padding-right: 30px; } /* Adjust dot spacing */
-      .nav-link::after { width: 10px; height: 10px; } /* Slightly larger dot */
+    @media screen and (min-width: 1920px) { 
+      .left-section { padding: 4vw 5vw; }
+      .name { font-size: 5rem; } 
+      #home-content .content-body { font-size: 1.35rem; } 
+      .navigation-menu { width: 320px; } 
+      .nav-link { font-size: 2.5rem; }
+      .social-icons a img { width: 44px; height: 44px; } /* Adjusted scaled size */
+      .nav-link::after { height: 1.5px; } 
     }
-    
-    @media screen and (max-width: 1200px) {
-      .main-view-area { padding: 2rem 3rem; }
-      .name { font-size: 3.8rem; }
-      .content-title { font-size: 2.3rem; }
-      .navigation-menu { width: 250px; padding: 0 2rem;}
-      .nav-link { font-size: 2rem; padding-right: 22px; }
-      .nav-link::after { width: 7px; height: 7px; }
-    }
-    
-    @media screen and (max-width: 992px) { /* Tablet and Mobile */
-      body { flex-direction: column; } /* Stack main view and nav */
+
+    @media screen and (max-width: 992px) { /* MOBILE LAYOUT */
+      body { 
+        flex-direction: column; 
+        padding-bottom: 60px; /* Space for fixed bottom nav. Adjust if nav height changes */
+        height: 100vh; /* Ensure body takes full viewport height for fixed nav context */
+        overflow: hidden; /* Prevent body scroll, .left-section will scroll */
+      } 
       
-      .main-view-area {
-        padding: 3rem 2rem;
-        min-height: auto; 
-        order: 2; /* Content below nav */
+      .left-section { /* Main scrollable content area on mobile */
+        padding: 2rem 1rem; /* Reduced padding */
+        min-height: 0; /* Allow it to be smaller than viewport if content is short */
+        order: 1; /* Content area comes first */
         text-align: center; 
         align-items: center; 
+        justify-content: flex-start; /* Align content to top */
+        width: 100%; 
+        flex-grow: 1; 
+        overflow-y: auto; /* THIS MAKES THE CONTENT SCROLLABLE */
+        padding-bottom: 1rem; /* Space at the very bottom of scrollable area */
+        z-index: 1; /* Above fixed canvas if it had higher z-index */
       }
-      .name { font-size: 3rem; margin-bottom: 1.5rem; text-align: center;}
-      .content-title { font-size: 1.8rem; text-align: center;}
-      .content-body { font-size: 1rem; text-align: left; }
-      .social-icons {
-        position: relative; 
-        bottom: auto; left: auto;
-        justify-content: center;
-        margin-top: 2rem;
-        margin-bottom: 1rem; 
+      .content-align-wrapper {
+          margin-top: 0 !important; /* Override JS alignment for name */
+          width: 100%; 
+          display: flex; 
+          flex-direction: column; 
+          align-items: center; 
       }
-
-      .navigation-menu {
-        width: 100%;
-        order: 1; /* Nav on top */
-        flex-direction: row; /* Horizontal nav items */
-        flex-wrap: wrap; 
-        justify-content: center; /* Center nav items */
-        text-align: center; /* Center text within nav items */
-        padding: 1rem 1rem; /* Padding for the nav bar */
-        border-bottom: 1px solid rgba(255, 255, 255, 0.08); /* Separator line */
-        background-color: rgba(0,0,0,0.25);
-      }
-      .nav-box {
-        padding: 0.8rem 1rem; /* Padding around each nav item */
-        text-align: center; /* Ensure link is centered in box */
-      }
-      .nav-link {
-        font-size: 1.1rem; /* Smaller font for horizontal nav */
-        letter-spacing: 1px;
-        padding-right: 18px; /* Adjust space for dot */
-      }
-      .nav-box.active .nav-link {
-        letter-spacing: 1.5px; 
-      }
-      .nav-link::after { /* Dot styling for horizontal nav */
-        width: 6px;
-        height: 6px;
-        /* Position will still be relative to nav-link, which is fine */
+      .name { 
+          font-size: clamp(2rem, 7vw, 2.8rem); 
+          font-weight: 300; 
+          margin-bottom: 1.5rem; 
+          text-align: center;
+          /* Order is handled by document flow within content-align-wrapper */
       }
       
-      #canvas-holder {
-        width: 80vw; height: 50vh; 
-        max-width: 400px; max-height: 300px;
-        opacity: 0.5;
-        top: 20%; /* Adjust if nav bar is tall */
+      #canvas-holder { /* Canvas for MOBILE - In flow, specific size */
+          position: relative; /* Part of the scrollable document flow */
+          transform: none; 
+          top: auto; left: auto; 
+          width: 75vw; /* Based on screenshot appearance */
+          max-width: 300px; 
+          /* Height will be set by p5.js to match its width (for a circle) OR set aspect-ratio */
+          aspect-ratio: 1 / 1; /* To make it circular/square based on width */
+          /* height: 75vw; Remove if using aspect-ratio */
+          /* max-height: 300px; Remove if using aspect-ratio and relying on max-width */
+          margin: 0 auto 1.5rem auto; /* Centered, space below */
+          z-index: 1; 
+          pointer-events: auto; 
+          opacity: 0.9; /* Good visibility */
       }
+
+      .page-content.active { 
+          width: 100%;
+          max-width: 90%; 
+          text-align: center; 
+          display: flex; /* For centering social icons */
+          flex-direction: column;
+          align-items: center;
+      }
+      #home-content .content-body { /* Specific to home content's text block */
+          font-size: clamp(0.9rem, 3.5vw, 1.05rem); 
+          text-align: left; 
+          margin-top: 0; 
+          max-width: 100%; 
+      }
+      
+      .social-icons { 
+        margin: 1.5rem auto 1rem auto; 
+        width: fit-content; 
+        padding-left: 0; 
+        gap: 1.2rem; /* Slightly smaller gap for smaller icons */
+        justify-content: center; 
+      }
+      .social-icons a img {
+          width: 32px;  /* Approx -10% from 35px */
+          height: 32px;
+      }
+
+      .navigation-menu { /* Mobile Bottom Fixed Navigation */
+        width: 100%; 
+        order: 2; /* Nav bar is the second item in body's flex column */
+        flex-direction: row; 
+        flex-wrap: wrap; 
+        justify-content: space-around; 
+        align-items: center;
+        text-align: center; 
+        padding: 0.8rem 0.5rem; 
+        border-left: none; 
+        border-top: 1px solid #333; 
+        background-color: #000000; 
+        position: fixed; 
+        bottom: 0;
+        left: 0;
+        z-index: 10; 
+      }
+      .nav-item { padding: 0.5rem; }
+      .nav-link {
+        font-size: clamp(0.75rem, 2.8vw, 0.9rem); 
+        letter-spacing: 1px;
+        padding-bottom: 3px; 
+        color: #ccc; 
+        opacity: 0.85; 
+      }
+      .nav-item:hover .nav-link, .nav-item.active .nav-link {
+        color: #31ffff; 
+      }
+      .nav-link::after { height: 1px; } 
     }
 
-    @media screen and (max-width: 768px) { /* Smaller Mobile */
-        .main-view-area { padding: 2rem 1.5rem; }
-        .name { font-size: 2.5rem; }
-        .content-title { font-size: 1.6rem; }
-        .navigation-menu { padding: 0.8rem 0.5rem; }
-        .nav-box { padding: 0.6rem 0.8rem; }
-        .nav-link { font-size: 0.9rem; padding-right: 15px; }
-        .nav-link::after { width: 5px; height: 5px; }
-
+    @media screen and (max-width: 768px) { 
+        body { padding-bottom: 55px; } 
+        .left-section { padding: 1.5rem 1rem; }
+        .name { font-size: clamp(1.8rem, 6vw, 2.2rem); }
         #canvas-holder {
-             width: 90vw; height: 40vh;
-             max-width: 300px; max-height: 250px;
-             opacity: 0.4;
-             top: 15%;
+            width: 80vw; max-width: 280px;
+            height: 80vw; max-height: 280px; /* For aspect-ratio: 1/1 */
         }
+        #home-content .content-body { font-size: clamp(0.85rem, 3.2vw, 1rem); }
+        .social-icons a img { width: 28px; height: 28px; }
+        .navigation-menu { padding: 0.6rem 0.3rem; }
+        .nav-item { padding: 0.4rem; }
+        .nav-link { font-size: clamp(0.7rem, 2.5vw, 0.8rem); }
     }
-    @media screen and (max-width: 480px) { /* Extra Small Mobile */
-        .nav-link { font-size: 0.8rem; padding-right: 12px; }
-        .nav-link::after { width: 4px; height: 4px; }
+    @media screen and (max-width: 480px) { 
+        body { padding-bottom: 50px; }
+        .name { font-size: clamp(1.6rem, 6vw, 2rem); }
+         #canvas-holder {
+            width: 85vw; max-width: 260px;
+            height: 85vw; max-height: 260px; /* For aspect-ratio: 1/1 */
+        }
+        .nav-link { font-size: clamp(0.65rem, 2.2vw, 0.75rem); letter-spacing: 0.5px; }
+        .social-icons { gap: 1rem; }
+        .social-icons a img { width: 26px; height: 26px; }
     }
-
   </style>
 </head>
 <body>
-  <!-- Main Content Area -->
-  <div class="main-view-area">
-    <div class="name">Subhankar Panda</div>
-    
-    <div id="home-content" class="page-content active">
-      <div class="content-title">Welcome</div>
-      <div class="content-body">
-        <p>Hello! I'm Subhankar Panda, a passionate creator and developer. This space is a window into my projects, thoughts, and inspirations. Dive in and explore!</p>
-      </div>
-    </div>
-    
-    <div id="projects-content" class="page-content">
-      <div class="content-title">Projects</div>
-      <div class="content-body">
-        <p>Here I showcase my work. From web applications to creative coding experiments, each project reflects a journey of learning and creation.</p>
-        <p><em>Example Project Alpha:</em> A full-stack solution for data visualization. Technologies: React, Node.js, D3.js.</p>
-      </div>
-    </div>
-    
-    <div id="blog-content" class="page-content">
-      <div class="content-title">Blog</div>
-      <div class="content-body">
-        <p>Thoughts, tutorials, and reflections on technology, design, and life. A place for sharing knowledge and sparking conversations.</p>
-        <p><em>Latest Post:</em> "The Aesthetics of Code - Finding Beauty in Logic."</p>
-      </div>
-    </div>
-    
-    <div id="lists-content" class="page-content">
-      <div class="content-title">Lists</div>
-      <div class="content-body">
-        <p>Curated collections of things I find inspiring or noteworthy. Books that shaped my thinking, tools I can't live without, or music that fuels my focus.</p>
-        <p><em>Currently Reading:</em> "Sapiens" by Yuval Noah Harari.</p>
-      </div>
-    </div>
-    
-    <div id="music-content" class="page-content">
-      <div class="content-title">Music</div>
-      <div class="content-body">
-        <p>Music is a constant companion. Here I share playlists that set the mood for coding, relaxing, or exploring new ideas.</p>
-        <p><em>Current Vibe:</em> Ambient electronic and lo-fi hip hop.</p>
-      </div>
-    </div>
-    
-    <div class="social-icons">
-<a href="mailto:example@example.com" title="Email" target="_blank" aria-label="Email" >
-  <img src="image/envelope-solid.svg" alt="Email icon" width="42" height="42" />
-</a>
-
-
-      <a href="#" title="Github" target="_blank" aria-label="Github">
-<img src="image/github-brands.svg" alt="Github" width="42" height="42" />
-      </a>
-      <a href="#" title="Twitter" target="_blank" aria-label="Twitter">
-<img src="image/x-twitter-brands.svg" alt="X" width="42" height="42" />
-      </a>
-      <a href="#" title="Linkedin" target="_blank" aria-label="Linkedin">
-        <img src="image/linkedin-in-brands (1).svg" alt="Linkein" width="42" height="42" />
-      </a>
-    </div>
-  </div>
+  <div class="left-section"> 
+    <div class="content-align-wrapper">
+        <div class="name">Subhankar Panda</div>
+        
+        <!-- Canvas holder is part of the flow for mobile -->
+        <div id="canvas-holder"></div> 
+        
+        <div id="home-content" class="page-content active">
+          <div class="content-body">
+            <p>Most of my time is spent chasing one rabbit hole after another; sometimes it's oddly satisfying, sometimes it leads me to something interesting, I also like cross linking different fields to get unique perspective of the subject at hand.</p>                 
+            <p>One of the saner rabbit hole topics I like to get lost in is AI and anything related to it (please someone donate their GPU credits)</p>                 
+            <p><strong>Currently, I am open to technical roles focused on AI engineering or research, so if you are looking for someone similar, feel free to contact me!</strong></p>
+          </div>
+          <div class="social-icons">
+            <a href="subhankarpanda556@gmail.com" title="Email" target="_blank" aria-label="Email" ><img src="image/envelope-solid.svg" alt="Email icon" /></a>
+            <a href="https://github.com/S-panda1" title="Github" target="_blank" aria-label="Github"><img src="image/github-brands.svg" alt="Github icon" /></a>
+            <a href="https://x.com/Glados_33" title="Twitter" target="_blank" aria-label="Twitter"><img src="image/x-twitter-brands.svg" alt="X icon" /></a>
+            <a href="https://www.linkedin.com/in/subhankar-panda-08b5801ba/" title="Linkedin" target="_blank" aria-label="Linkedin"><img src="image/linkedin-in-brands (1).svg" alt="LinkedIn icon" /></a>
+          </div>
+        </div>
+        
+        <!-- Other page-content divs for external links - REMOVED for this version -->
+        <!-- If Projects, Blog etc. were local, they would follow this structure: -->
+        <!-- 
+        <div id="projects-content" class="page-content">
+          <div class="content-body"> <p>Project details here...</p> </div>
+          <div class="social-icons"> ... </div>
+        </div> 
+        -->
+    </div> 
+  </div> 
   
-  <!-- p5.js Canvas will be placed here by script -->
-  <div id="canvas-holder"></div>
+  <!-- No separate canvas-holder for desktop fixed backdrop needed if #canvas-holder switches behavior -->
   
-  <!-- Navigation Menu -->
   <div class="navigation-menu">
-    <div class="nav-box active" data-section="home">
-      <div class="nav-link">Home</div>
-    </div>
-    <div class="nav-box" data-section="projects">
-      <div class="nav-link">Projects</div>
-    </div>
-    <div class="nav-box" data-section="blog">
-      <div class="nav-link">Blog</div>
-    </div>
-    <div class="nav-box" data-section="lists">
-      <div class="nav-link">Lists</div>
-    </div>
-    <div class="nav-box" data-section="music">
-      <div class="nav-link">Music</div>
-    </div>
+    <div class="nav-item active" data-section-link="home"> <span class="nav-link">Home</span> </div>
+    <a href="YOUR_PROJECTS_URL" target="_blank" rel="noopener noreferrer" class="nav-item"> <span class="nav-link">Projects</span> </a>
+    <a href="YOUR_BLOG_URL" target="_blank" rel="noopener noreferrer" class="nav-item"> <span class="nav-link">Blog</span> </a>
+    <a href="YOUR_LISTS_URL" target="_blank" rel="noopener noreferrer" class="nav-item"> <span class="nav-link">Lists</span> </a>
+    <a href="YOUR_MUSIC_URL" target="_blank" rel="noopener noreferrer" class="nav-item"> <span class="nav-link">Music</span> </a>
   </div>
 
   <script>
-    document.querySelectorAll('.nav-box').forEach(box => {
-      box.addEventListener('click', function() {
-        document.querySelectorAll('.nav-box').forEach(b => b.classList.remove('active'));
-        document.querySelectorAll('.page-content').forEach(content => content.classList.remove('active')); // Changed .main-content to .page-content
-        
-        this.classList.add('active');
-        
-        const section = this.getAttribute('data-section');
-        const targetContent = document.getElementById(`${section}-content`);
-        if (targetContent) {
-            targetContent.classList.add('active');
+    const navItems = document.querySelectorAll('.navigation-menu .nav-item');
+    const homeContent = document.getElementById('home-content');
+
+    navItems.forEach(item => {
+      item.addEventListener('click', function(e) {
+        if (this.getAttribute('data-section-link') === 'home') {
+          e.preventDefault(); 
+          navItems.forEach(i => i.classList.remove('active'));
+          this.classList.add('active');
+          if (homeContent) { homeContent.classList.add('active'); }
         }
       });
     });
+    
+    if (document.querySelector('.navigation-menu .nav-item.active[data-section-link="home"]') && homeContent) {
+        homeContent.classList.add('active');
+    }
 
-    // Optional: Ensure 'Home' is active by default if not set in HTML already
-    // document.addEventListener('DOMContentLoaded', () => {
-    //    if (!document.querySelector('.nav-box.active')) {
-    //        document.querySelector('.nav-box[data-section="home"]').click();
-    //    }
-    // });
+    function alignNameWithHomeNav() {
+        const contentWrapper = document.querySelector('.left-section .content-align-wrapper');
+        const nameElement = document.querySelector('.left-section .name'); 
+        const firstNavLinkText = document.querySelector('.navigation-menu .nav-item[data-section-link="home"] .nav-link');
+        
+        if (window.innerWidth > 992 && nameElement && firstNavLinkText && contentWrapper) {
+            contentWrapper.style.marginTop = '0px'; 
+            requestAnimationFrame(() => { 
+                const navLinkRect = firstNavLinkText.getBoundingClientRect();
+                const nameRect = nameElement.getBoundingClientRect(); 
+                if (navLinkRect.top > 0 && nameRect.top > 0) { 
+                    const offset = navLinkRect.top - nameRect.top;
+                    contentWrapper.style.marginTop = offset + 'px';
+                }
+            });
+        } else if (contentWrapper) {
+            contentWrapper.style.marginTop = '0px';
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        alignNameWithHomeNav(); 
+        if (document.fonts) { 
+            document.fonts.ready.then(alignNameWithHomeNav);
+        } else { 
+            setTimeout(alignNameWithHomeNav, 500); 
+            setTimeout(alignNameWithHomeNav, 1500); 
+        }
+    });
+    window.addEventListener('resize', alignNameWithHomeNav); 
   </script>
-  <script src="sketch.js"></script> <!-- Your existing sketch.js -->
+  <script src="sketch.js"></script> 
 </body>
 </html>
