@@ -1,432 +1,561 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Exo:ital,wght@0,100..900;1,100..900&family=Fira+Sans:ital,wght@0,200;0,300;0,400;0,500&display=swap" rel="stylesheet">
-  <title>Subhankar Panda</title>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-    
-    body, html {
-      height: 100%;
-      font-family: 'Fira Sans', sans-serif;
-      background-color: #000000; 
-      color: #ffffff; 
-      overflow-x: hidden;
-    }
-    
-    body {
-      display: flex;
-      flex-direction: row; /* Default: Desktop layout */
-    }
-    
-    .left-section { 
-      flex: 1; 
-      padding: 3vw 4vw; 
-      position: relative; 
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      justify-content: center; 
-      z-index: 2; 
-       /* Added for potential scroll on desktop if content is too tall */
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Subhankar Panda</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.7.0/p5.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-    .content-align-wrapper {
-        width: 100%; 
-        position: relative;
-        z-index: 1;
-    }
-    
-    .name {
-      font-size: clamp(3rem, 6vw, 5rem); 
-      font-weight: 300; 
-      margin-bottom: -1rem; 
-      font-family: "Exo", sans-serif;
-      letter-spacing: 1.5px;
-      color: #ffffff;
-      transition: color 0.2s ease-in; 
-      position: relative;
-      z-index: 1;
-    }
-    
-    .content-body {
-      font-size: clamp(1rem, 1.6vw, 1.35rem); 
-      line-height: 1.4; 
-      font-weight: 300; 
-      max-width: 45ch; 
-      color: #cccccc; 
-      margin-top: 2.5rem; 
-      transition: color 0.2s ease-in;
-      position: relative;
-      z-index: 1;
-    }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #000;
+            color: #fff;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
 
-    .content-body p {
-        margin-bottom: 1rem;
-    }
-    
-    .page-content {
-      display: none;
-      opacity: 0;
-      transform: translateY(20px);
-      transition: opacity 0.6s ease-out, transform 0.6s ease-out, color 0.2s ease-in;
-      position: relative;
-      z-index: 1;
-    }
-    
-    .page-content.active {
-      display: block; /* Default for desktop */
-      opacity: 1;
-      transform: translateY(0);
-    }
-    
-    .social-icons {
-      display: flex;
-      gap: 1.5rem; 
-      margin-top: 2.5rem; 
-      margin-bottom: clamp(2rem, 4vh, 3rem); 
-      justify-content: flex-start; 
-      padding-left: 0; 
-    }
-    
-    .social-icons a img {
-        /* SMALLER social icons */
-        width: clamp(28px, 2.8vw, 40px); 
-        height: clamp(28px, 2.8vw, 40px);
-        filter: brightness(0) invert(1); 
-        transition: transform 0.2s ease-in, opacity 0.2s ease-in; 
-        opacity: 0.8; 
-    }
-     .social-icons a:hover img {
-        transform: scale(1.1); 
-        opacity: 1; 
-    }
-    
-    .navigation-menu { 
-      width: clamp(250px, 20vw, 320px); 
-      display: flex;
-      flex-direction: column;
-      justify-content: center; 
-      text-align: right; 
-      padding: 0 clamp(2rem, 3vw, 3.5rem); 
-      z-index: 10; /* Ensure it's above canvas if canvas z-index changes */
-      background-color: rgba(0,0,0,0.05); 
-      border-left: 1px solid #ffffff1d; 
-    }
-    
-    .nav-item { 
-      padding: clamp(1.2rem, 2vh, 1.8rem) 0; 
-      cursor: pointer;
-      position: relative; 
-      text-decoration: none; 
-    }
-        
-    .nav-link { 
-      font-family: "Exo", sans-serif;
-      font-size: clamp(1.8rem, 2.5vw, 2.5rem); 
-      font-weight: 200; 
-      text-transform: uppercase;
-      letter-spacing: 2px;
-      color: #a0a0a0; 
-      transition: color 0.2s ease-in, font-weight 0.2s ease-in, letter-spacing 0.2s ease-in; 
-      display: inline-block; 
-      position: relative; 
-      padding-bottom: 5px; 
-    }
+        /* Hero Section */
+        .hero {
+            height: 100vh;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
 
-    .nav-link::after { /* Underline */
-      content: '';
-      position: absolute;
-      left: 0;
-      bottom: 0;
-      width: 100%;
-      height: 1px; 
-      background-color: #31ffff; 
-      transform: scaleX(0);
-      transform-origin: right; 
-      transition: transform 0.2s ease-in; 
-    }
-    .nav-item:hover .nav-link::after, 
-    .nav-item.active .nav-link::after {
-      transform: scaleX(1);
-      transform-origin: left; 
-    }
-
-    .nav-item:hover .nav-link { 
-      color: #31ffff; 
-      font-weight: 400; 
-    }
-    
-    .nav-item.active .nav-link { 
-      color:  #31ffff; 
-      font-weight: 400; 
-      letter-spacing: 2.5px; 
-    }
-    
-    #canvas-holder { /* DESKTOP: Fixed centered backdrop */
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      width: clamp(60vw, 65vw, 70vw); 
-      height: clamp(80vh, 85vh, 90vh); 
-      max-width: 1000px; 
-      max-height: 850px; 
-      z-index: 0; 
-      pointer-events: none;
-      opacity: 1; 
-    }
-
-    /* --- Responsive Adjustments --- */
-    @media screen and (min-width: 1920px) { 
-      .left-section { padding: 4vw 5vw; }
-      .name { font-size: 5rem; } 
-      #home-content .content-body { font-size: 1.35rem; } 
-      .navigation-menu { width: 320px; } 
-      .nav-link { font-size: 2.5rem; }
-      .social-icons a img { width: 44px; height: 44px; } /* Adjusted scaled size */
-      .nav-link::after { height: 1.5px; } 
-    }
-
-    @media screen and (max-width: 992px) { /* MOBILE LAYOUT */
-      body { 
-        flex-direction: column; 
-        padding-bottom: 60px; /* Space for fixed bottom nav. Adjust if nav height changes */
-        height: 100vh; /* Ensure body takes full viewport height for fixed nav context */
-        overflow: hidden; /* Prevent body scroll, .left-section will scroll */
-      } 
-      
-      .left-section { /* Main scrollable content area on mobile */
-        padding: 2rem 1rem; /* Reduced padding */
-        min-height: 0; /* Allow it to be smaller than viewport if content is short */
-        order: 1; /* Content area comes first */
-        text-align: center; 
-        align-items: center; 
-        justify-content: flex-start; /* Align content to top */
-        width: 100%; 
-        flex-grow: 1; 
-        overflow-y: auto; /* THIS MAKES THE CONTENT SCROLLABLE */
-        padding-bottom: 1rem; /* Space at the very bottom of scrollable area */
-        z-index: 1; /* Above fixed canvas if it had higher z-index */
-      }
-      .content-align-wrapper {
-          margin-top: 0 !important; /* Override JS alignment for name */
-          width: 100%; 
-          display: flex; 
-          flex-direction: column; 
-          align-items: center; 
-      }
-      .name { 
-          font-size: clamp(2rem, 7vw, 2.8rem); 
-          font-weight: 300; 
-          margin-bottom: 1.5rem; 
-          text-align: center;
-          /* Order is handled by document flow within content-align-wrapper */
-      }
-      
-      #canvas-holder { /* Canvas for MOBILE - In flow, specific size */
-          position: relative; /* Part of the scrollable document flow */
-          transform: none; 
-          top: auto; left: auto; 
-          width: 75vw; /* Based on screenshot appearance */
-          max-width: 300px; 
-          /* Height will be set by p5.js to match its width (for a circle) OR set aspect-ratio */
-          aspect-ratio: 1 / 1; /* To make it circular/square based on width */
-          /* height: 75vw; Remove if using aspect-ratio */
-          /* max-height: 300px; Remove if using aspect-ratio and relying on max-width */
-          margin: 0 auto 1.5rem auto; /* Centered, space below */
-          z-index: 1; 
-          pointer-events: auto; 
-          opacity: 0.9; /* Good visibility */
-      }
-
-      .page-content.active { 
-          width: 100%;
-          max-width: 90%; 
-          text-align: center; 
-          display: flex; /* For centering social icons */
-          flex-direction: column;
-          align-items: center;
-      }
-      #home-content .content-body { /* Specific to home content's text block */
-          font-size: clamp(0.9rem, 3.5vw, 1.05rem); 
-          text-align: left; 
-          margin-top: 0; 
-          max-width: 100%; 
-      }
-      
-      .social-icons { 
-        margin: 1.5rem auto 1rem auto; 
-        width: fit-content; 
-        padding-left: 0; 
-        gap: 1.2rem; /* Slightly smaller gap for smaller icons */
-        justify-content: center; 
-      }
-      .social-icons a img {
-          width: 32px;  /* Approx -10% from 35px */
-          height: 32px;
-      }
-
-      .navigation-menu { /* Mobile Bottom Fixed Navigation */
-        width: 100%; 
-        order: 2; /* Nav bar is the second item in body's flex column */
-        flex-direction: row; 
-        flex-wrap: wrap; 
-        justify-content: space-around; 
-        align-items: center;
-        text-align: center; 
-        padding: 0.8rem 0.5rem; 
-        border-left: none; 
-        border-top: 1px solid #333; 
-        background-color: #000000; 
-        position: fixed; 
-        bottom: 0;
-        left: 0;
-        z-index: 10; 
-      }
-      .nav-item { padding: 0.5rem; }
-      .nav-link {
-        font-size: clamp(0.75rem, 2.8vw, 0.9rem); 
-        letter-spacing: 1px;
-        padding-bottom: 3px; 
-        color: #ccc; 
-        opacity: 0.85; 
-      }
-      .nav-item:hover .nav-link, .nav-item.active .nav-link {
-        color: #31ffff; 
-      }
-      .nav-link::after { height: 1px; } 
-    }
-
-    @media screen and (max-width: 768px) { 
-        body { padding-bottom: 55px; } 
-        .left-section { padding: 1.5rem 1rem; }
-        .name { font-size: clamp(1.8rem, 6vw, 2.2rem); }
         #canvas-holder {
-            width: 80vw; max-width: 280px;
-            height: 80vw; max-height: 280px; /* For aspect-ratio: 1/1 */
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
         }
-        #home-content .content-body { font-size: clamp(0.85rem, 3.2vw, 1rem); }
-        .social-icons a img { width: 28px; height: 28px; }
-        .navigation-menu { padding: 0.6rem 0.3rem; }
-        .nav-item { padding: 0.4rem; }
-        .nav-link { font-size: clamp(0.7rem, 2.5vw, 0.8rem); }
-    }
-    @media screen and (max-width: 480px) { 
-        body { padding-bottom: 50px; }
-        .name { font-size: clamp(1.6rem, 6vw, 2rem); }
-         #canvas-holder {
-            width: 85vw; max-width: 260px;
-            height: 85vw; max-height: 260px; /* For aspect-ratio: 1/1 */
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            pointer-events: none;
         }
-        .nav-link { font-size: clamp(0.65rem, 2.2vw, 0.75rem); letter-spacing: 0.5px; }
-        .social-icons { gap: 1rem; }
-        .social-icons a img { width: 26px; height: 26px; }
-    }
-  </style>
+
+        .name {
+            font-size: clamp(3rem, 8vw, 8rem);
+            font-weight: 300;
+            letter-spacing: 0.02em;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #ffffff 0%, #e0e0e8 50%, #c0c0d0 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 0 30px rgba(255, 255, 255, 0.1);
+        }
+
+        .tagline {
+            font-size: clamp(1rem, 2.5vw, 1.5rem);
+            font-weight: 300;
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 3rem;
+            max-width: 600px;
+            line-height: 1.4;
+        }
+
+        /* Social Links */
+        .social-links {
+            position: absolute;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 2rem;
+            z-index: 2;
+            pointer-events: auto;
+        }
+
+        .social-link {
+            width: 48px;
+            height: 48px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            color: rgba(255, 255, 255, 0.7);
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+
+        .social-link:hover {
+            border-color: rgba(255, 255, 255, 0.5);
+            color: #fff;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(255, 255, 255, 0.1);
+        }
+
+        .social-link svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        /* Scroll Indicator */
+        .scroll-indicator {
+            position: absolute;
+            bottom: 8rem;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 2;
+            pointer-events: auto;
+        }
+
+        .scroll-arrow {
+            width: 24px;
+            height: 24px;
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            border-top: none;
+            border-right: none;
+            transform: rotate(-45deg);
+            animation: bounce 2s infinite;
+            cursor: pointer;
+            transition: border-color 0.3s ease;
+        }
+
+        .scroll-arrow:hover {
+            border-color: rgba(255, 255, 255, 0.8);
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateY(0) rotate(-45deg);
+            }
+            40% {
+                transform: translateY(-10px) rotate(-45deg);
+            }
+            60% {
+                transform: translateY(-5px) rotate(-45deg);
+            }
+        }
+
+        /* Content Sections */
+        .content-section {
+            min-height: 100vh;
+            padding: 4rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .section-content {
+            max-width: 800px;
+            width: 100%;
+        }
+
+        .section-title {
+            font-size: clamp(2rem, 5vw, 3rem);
+            font-weight: 300;
+            margin-bottom: 2rem;
+            color: #fff;
+        }
+
+        .section-text {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 2rem;
+        }
+
+        /* Navigation Menu (hidden initially) */
+        .nav-menu {
+            position: fixed;
+            top: 2rem;
+            right: 2rem;
+            z-index: 10;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .nav-menu.visible {
+            opacity: 1;
+        }
+
+        .nav-link {
+            display: block;
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            padding: 0.5rem 0;
+            font-size: 1.1rem;
+            font-weight: 300;
+            transition: color 0.3s ease;
+            text-align: right;
+        }
+
+        .nav-link:hover {
+            color: #fff;
+        }
+
+        /* Projects Grid */
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .project-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 2rem;
+            transition: all 0.3s ease;
+        }
+
+        .project-card:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(255, 255, 255, 0.2);
+            transform: translateY(-4px);
+        }
+
+        .project-title {
+            font-size: 1.3rem;
+            font-weight: 400;
+            margin-bottom: 1rem;
+            color: #fff;
+        }
+
+        .project-description {
+            color: rgba(255, 255, 255, 0.7);
+            line-height: 1.5;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .social-links {
+                gap: 1.5rem;
+            }
+            
+            .social-link {
+                width: 44px;
+                height: 44px;
+            }
+            
+            .nav-menu {
+                top: 1rem;
+                right: 1rem;
+            }
+            
+            .content-section {
+                padding: 2rem 1rem;
+            }
+        }
+    </style>
 </head>
 <body>
-  <div class="left-section"> 
-    <div class="content-align-wrapper">
-        <div class="name">Subhankar Panda</div>
+    <!-- Navigation Menu -->
+    <nav class="nav-menu" id="navMenu">
+        <a href="#home" class="nav-link">HOME</a>
+        <a href="#about" class="nav-link">ABOUT</a>
+        <a href="#projects" class="nav-link">PROJECTS</a>
+        <a href="#blog" class="nav-link">BLOG</a>
+        <a href="#contact" class="nav-link">CONTACT</a>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <div id="canvas-holder"></div>
         
-        <!-- Canvas holder is part of the flow for mobile -->
-        <div id="canvas-holder"></div> 
-        
-        <div id="home-content" class="page-content active">
-          <div class="content-body">
-            <p>Most of my time is spent chasing one rabbit hole after another; sometimes it's oddly satisfying, sometimes it leads me to something interesting, I also like cross linking different fields to get unique perspective of the subject at hand.</p>                 
-            <p>One of the saner rabbit hole topics I like to get lost in is AI and anything related to it (please someone donate their GPU credits)</p>                 
-            <p><strong>Currently, I am open to technical roles focused on AI engineering or research, so if you are looking for someone similar, feel free to contact me!</strong></p>
-          </div>
-          <div class="social-icons">
-            <a href="subhankarpanda556@gmail.com" title="Email" target="_blank" aria-label="Email" ><img src="image/envelope-solid.svg" alt="Email icon" /></a>
-            <a href="https://github.com/S-panda1" title="Github" target="_blank" aria-label="Github"><img src="image/github-brands.svg" alt="Github icon" /></a>
-            <a href="https://x.com/Glados_33" title="Twitter" target="_blank" aria-label="Twitter"><img src="image/x-twitter-brands.svg" alt="X icon" /></a>
-            <a href="https://www.linkedin.com/in/subhankar-panda-08b5801ba/" title="Linkedin" target="_blank" aria-label="Linkedin"><img src="image/linkedin-in-brands (1).svg" alt="LinkedIn icon" /></a>
-          </div>
+        <div class="hero-content">
+            <h1 class="name">Subhankar Panda</h1>
+            <p class="tagline">AI Engineer & Researcher exploring the depths of intelligent systems</p>
         </div>
-        
-        <!-- Other page-content divs for external links - REMOVED for this version -->
-        <!-- If Projects, Blog etc. were local, they would follow this structure: -->
-        <!-- 
-        <div id="projects-content" class="page-content">
-          <div class="content-body"> <p>Project details here...</p> </div>
-          <div class="social-icons"> ... </div>
-        </div> 
-        -->
-    </div> 
-  </div> 
-  
-  <!-- No separate canvas-holder for desktop fixed backdrop needed if #canvas-holder switches behavior -->
-  
-  <div class="navigation-menu">
-    <div class="nav-item active" data-section-link="home"> <span class="nav-link">Home</span> </div>
-    <a href="YOUR_PROJECTS_URL" target="_blank" rel="noopener noreferrer" class="nav-item"> <span class="nav-link">Projects</span> </a>
-    <a href="YOUR_BLOG_URL" target="_blank" rel="noopener noreferrer" class="nav-item"> <span class="nav-link">Blog</span> </a>
-    <a href="YOUR_LISTS_URL" target="_blank" rel="noopener noreferrer" class="nav-item"> <span class="nav-link">Lists</span> </a>
-    <a href="YOUR_MUSIC_URL" target="_blank" rel="noopener noreferrer" class="nav-item"> <span class="nav-link">Music</span> </a>
-  </div>
 
-  <script>
-    const navItems = document.querySelectorAll('.navigation-menu .nav-item');
-    const homeContent = document.getElementById('home-content');
+        <div class="scroll-indicator">
+            <div class="scroll-arrow" onclick="scrollToNext()"></div>
+        </div>
 
-    navItems.forEach(item => {
-      item.addEventListener('click', function(e) {
-        if (this.getAttribute('data-section-link') === 'home') {
-          e.preventDefault(); 
-          navItems.forEach(i => i.classList.remove('active'));
-          this.classList.add('active');
-          if (homeContent) { homeContent.classList.add('active'); }
+        <div class="social-links">
+            <a href="mailto:your@email.com" class="social-link" aria-label="Email">
+                <svg viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.89 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
+                </svg>
+            </a>
+            <a href="https://github.com/your-username" class="social-link" aria-label="GitHub">
+                <svg viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                </svg>
+            </a>
+            <a href="https://twitter.com/your-username" class="social-link" aria-label="Twitter">
+                <svg viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/>
+                </svg>
+            </a>
+            <a href="https://linkedin.com/in/your-profile" class="social-link" aria-label="LinkedIn">
+                <svg viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+                </svg>
+            </a>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section class="content-section" id="about">
+        <div class="section-content">
+            <h2 class="section-title">About Me</h2>
+            <p class="section-text">
+                Most of my time is spent chasing one rabbit hole after another; sometimes it's oddly satisfying, sometimes it leads me to something interesting. I also like cross-linking different fields to get unique perspectives of the subject at hand.
+            </p>
+            <p class="section-text">
+                One of the saner rabbit hole topics I like to get lost in is AI and anything related to it (please someone donate their GPU credits).
+            </p>
+            <p class="section-text">
+                Currently, I am open to technical roles focused on AI engineering or research, so if you are looking for someone similar, feel free to contact me!
+            </p>
+        </div>
+    </section>
+
+    <!-- Projects Section -->
+    <section class="content-section" id="projects">
+        <div class="section-content">
+            <h2 class="section-title">Projects</h2>
+            <div class="projects-grid">
+                <div class="project-card">
+                    <h3 class="project-title">Project One</h3>
+                    <p class="project-description">Description of your first project. What technologies did you use? What problem did it solve?</p>
+                </div>
+                <div class="project-card">
+                    <h3 class="project-title">Project Two</h3>
+                    <p class="project-description">Description of your second project. Highlight the key features and impact.</p>
+                </div>
+                <div class="project-card">
+                    <h3 class="project-title">Project Three</h3>
+                    <p class="project-description">Description of your third project. What made this project unique or challenging?</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Blog Section -->
+    <section class="content-section" id="blog">
+        <div class="section-content">
+            <h2 class="section-title">Recent Posts</h2>
+            <p class="section-text">
+                Thoughts and insights from my journey through AI research, engineering challenges, and the occasional rabbit hole discovery.
+            </p>
+            <div class="projects-grid">
+                <div class="project-card">
+                    <h3 class="project-title">Blog Post Title</h3>
+                    <p class="project-description">A brief excerpt from your latest blog post about AI, research, or whatever rabbit hole you've been exploring recently.</p>
+                </div>
+                <div class="project-card">
+                    <h3 class="project-title">Another Post</h3>
+                    <p class="project-description">Another engaging post that showcases your thinking and expertise in your field.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section class="content-section" id="contact">
+        <div class="section-content">
+            <h2 class="section-title">Let's Connect</h2>
+            <p class="section-text">
+                Interested in collaborating on AI projects, discussing research ideas, or just want to chat about the latest rabbit hole you've discovered? I'd love to hear from you.
+            </p>
+        </div>
+    </section>
+
+    <script>
+        // Your existing p5.js sketch code
+        let sketch = function(p) {
+            let CANVAS_WIDTH;    
+            let CANVAS_HEIGHT;
+            
+            const GLOBAL_SCALE    = 1;      
+            const OFFSET_X        = 0;      
+            const OFFSET_Y        = 0;      
+            const LAYERS          = 50; 
+            const ANGLE_STEP      = 5;  
+            
+            let BASE_RADIUS;     
+            let NOISE_AMOUNT;    
+            let HOVER_RADIUS;    
+            
+            const NOISE_SCALE     = 0.55; 
+            const HOVER_PULL      = 1.2;  
+            const COLOR_SPEED     = 0.01; 
+            const SHINY_ALPHA     = 80;   
+            const FIXED_STROKE_WEIGHT = 2;
+
+            let silverBaseColor;
+            let whiteHintColor;
+            let midGreyHintColor;
+            let darkGreyHintColor; 
+
+            let ox = p.random(10000), oy = p.random(10000), oz = p.random(10000);
+            let colorT = 0; 
+            let hoverActive = false;
+            let hoverX = 0, hoverY = 0;
+            let parentElement; 
+
+            function calculateDynamicDimensions() {
+                if (!parentElement) {
+                    parentElement = document.getElementById('canvas-holder');
+                }
+                
+                CANVAS_WIDTH = parentElement.offsetWidth;
+                CANVAS_HEIGHT = parentElement.offsetHeight;
+
+                const smallestDimension = p.min(CANVAS_WIDTH, CANVAS_HEIGHT);
+                
+                BASE_RADIUS = smallestDimension * 0.38; 
+                NOISE_AMOUNT = smallestDimension * 0.22; 
+                HOVER_RADIUS = smallestDimension * 0.20; 
+                
+                return { width: CANVAS_WIDTH, height: CANVAS_HEIGHT };
+            }
+
+            p.setup = function() {
+                parentElement = document.getElementById('canvas-holder'); 
+                const dimensions = calculateDynamicDimensions();
+                
+                let cnv = p.createCanvas(dimensions.width, dimensions.height);
+                cnv.parent('canvas-holder'); 
+
+                p.strokeWeight(FIXED_STROKE_WEIGHT); 
+                p.smooth();
+                p.noFill();
+
+                silverBaseColor = p.color(220, 220, 230);      
+                whiteHintColor    = p.color(255, 255, 255);    
+                midGreyHintColor  = p.color(160, 160, 170);    
+                darkGreyHintColor = p.color(100, 100, 110);    
+            };
+            
+            p.windowResized = function() {
+                const dimensions = calculateDynamicDimensions();
+                p.resizeCanvas(dimensions.width, dimensions.height);
+            };
+
+            p.draw = function() {
+                p.background(0); 
+
+                p.push();
+                p.translate(p.width/2 + OFFSET_X, p.height/2 + OFFSET_Y);
+                p.scale(GLOBAL_SCALE);
+
+                updateHover();
+                updateColorAndNoise(); 
+                drawRibbon();
+                p.pop();
+            };
+
+            function updateHover() {
+                if (p.mouseX >= 0 && p.mouseX <= p.width && 
+                    p.mouseY >= 0 && p.mouseY <= p.height) {
+                hoverActive = true;
+                hoverX = p.mouseX - p.width/2  - OFFSET_X; 
+                hoverY = p.mouseY - p.height/2 - OFFSET_Y; 
+                } else {
+                hoverActive = false;
+                }
+            }
+
+            function updateColorAndNoise() {
+                colorT = (colorT + COLOR_SPEED) % 1;
+                ox += 0.01; 
+                oy += 0.01; 
+                oz += 0.007; 
+            }
+
+            function drawRibbon() {
+                for (let i = 0; i < LAYERS; i++) {
+                p.beginShape();
+                
+                const layerSpecificPhase = (colorT + i * 0.02) % 1.0; 
+                let finalColor;
+
+                if (layerSpecificPhase < 0.333) {
+                    let t_segment = layerSpecificPhase / 0.333; 
+                    let hintIntensity = p.sin(t_segment * p.PI) * 0.70; 
+                    finalColor = p.lerpColor(silverBaseColor, whiteHintColor, hintIntensity); 
+                } else if (layerSpecificPhase < 0.666) {
+                    let t_segment = (layerSpecificPhase - 0.333) / 0.333; 
+                    let hintIntensity = p.sin(t_segment * p.PI) * 0.70;
+                    finalColor = p.lerpColor(silverBaseColor, midGreyHintColor, hintIntensity); 
+                } else {
+                    let t_segment = (layerSpecificPhase - 0.666) / 0.334; 
+                    let hintIntensity = p.sin(t_segment * p.PI) * 0.70;
+                    finalColor = p.lerpColor(silverBaseColor, darkGreyHintColor, hintIntensity); 
+                }
+
+                p.stroke(p.red(finalColor), p.green(finalColor), p.blue(finalColor), SHINY_ALPHA);
+
+                for (let angle = 0; angle < 360; angle += ANGLE_STEP) { 
+                    const rad = p.radians(angle);
+
+                    const n = p.noise(
+                    ox + p.cos(rad) * NOISE_SCALE,
+                    oy + p.sin(rad) * NOISE_SCALE,
+                    oz + (i * 0.02) 
+                    );
+                    const r0 = BASE_RADIUS + p.map(n, 0, 1, -NOISE_AMOUNT, NOISE_AMOUNT);
+
+                    let x = r0 * p.cos(rad);
+                    let y = r0 * p.sin(rad);
+
+                    if (hoverActive) {
+                    const d = p.dist(x, y, hoverX / GLOBAL_SCALE, hoverY / GLOBAL_SCALE); 
+                    if (d < HOVER_RADIUS) {
+                        let influence = p.map(d, 0, HOVER_RADIUS, 1, 0);
+                        influence = p.pow(influence, 1.5); 
+                        x += (hoverX / GLOBAL_SCALE - x) * influence * HOVER_PULL;
+                        y += (hoverY / GLOBAL_SCALE - y) * influence * HOVER_PULL;
+                    }
+                    }
+                    
+                    p.vertex(x, y);
+                }
+                p.endShape(p.CLOSE);
+                }
+            }
+        };
+
+        new p5(sketch);
+
+        // Navigation and scroll functionality
+        function scrollToNext() {
+            document.getElementById('about').scrollIntoView({ behavior: 'smooth' });
         }
-      });
-    });
-    
-    if (document.querySelector('.navigation-menu .nav-item.active[data-section-link="home"]') && homeContent) {
-        homeContent.classList.add('active');
-    }
 
-    function alignNameWithHomeNav() {
-        const contentWrapper = document.querySelector('.left-section .content-align-wrapper');
-        const nameElement = document.querySelector('.left-section .name'); 
-        const firstNavLinkText = document.querySelector('.navigation-menu .nav-item[data-section-link="home"] .nav-link');
-        
-        if (window.innerWidth > 992 && nameElement && firstNavLinkText && contentWrapper) {
-            contentWrapper.style.marginTop = '0px'; 
-            requestAnimationFrame(() => { 
-                const navLinkRect = firstNavLinkText.getBoundingClientRect();
-                const nameRect = nameElement.getBoundingClientRect(); 
-                if (navLinkRect.top > 0 && nameRect.top > 0) { 
-                    const offset = navLinkRect.top - nameRect.top;
-                    contentWrapper.style.marginTop = offset + 'px';
+        // Show navigation menu after scrolling past hero
+        window.addEventListener('scroll', function() {
+            const navMenu = document.getElementById('navMenu');
+            const scrollY = window.scrollY;
+            
+            if (scrollY > window.innerHeight * 0.3) {
+                navMenu.classList.add('visible');
+            } else {
+                navMenu.classList.remove('visible');
+            }
+        });
+
+        // Smooth scroll for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth' });
                 }
             });
-        } else if (contentWrapper) {
-            contentWrapper.style.marginTop = '0px';
-        }
-    }
-
-    document.addEventListener('DOMContentLoaded', () => {
-        alignNameWithHomeNav(); 
-        if (document.fonts) { 
-            document.fonts.ready.then(alignNameWithHomeNav);
-        } else { 
-            setTimeout(alignNameWithHomeNav, 500); 
-            setTimeout(alignNameWithHomeNav, 1500); 
-        }
-    });
-    window.addEventListener('resize', alignNameWithHomeNav); 
-  </script>
-  <script src="sketch.js"></script> 
+        });
+    </script>
 </body>
 </html>
